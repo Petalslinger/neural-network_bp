@@ -27,18 +27,23 @@ python bp.py --epochs 5       # ② 约 10 秒，测试准确率 97.6%
 python bp.py --epochs 40      # ③ 约 80 秒，98.3% 左右
 ```
 
-首次运行会自动下载 MNIST（约 11 MB）到 `data/mnist/`。依赖只有 `numpy`（画图需要 `matplotlib`，缺失时曲线图会降级为 `.txt`）。
+首次运行会自动下载 MNIST（约 11 MB）到 `data/mnist/`。核心依赖只有 `numpy`；可视化部分需要 `matplotlib`（训练曲线 / 混淆矩阵）和 `Pillow`（错例图），缺失时会自动降级或跳过，不影响训练。
+
+```powershell
+pip install numpy matplotlib Pillow   # 或 pip install -r requirements.txt
+```
 
 ---
 
 ## 文件结构
 
 ```
-nn.py           手写层库：Linear / ReLU / Sequential / Adam / softmax / 交叉熵
-bp.py           训练流程：建模型 / 一步训练 / 评估 / 混淆矩阵 / 可视化
-check_grad.py   三级数值梯度检查（单层、损失函数、端到端）
-mnist.py        IDX 数据加载（纯 urllib，不依赖 torchvision）
-BP手搓笔记.md    理论：公式推导、初始化数学、超参、失败诊断表
+nn.py             手写层库：Linear / ReLU / Sequential / Adam / softmax / 交叉熵
+bp.py             训练流程：建模型 / 一步训练 / 评估 / 混淆矩阵 / 可视化
+check_grad.py     三级数值梯度检查（单层、损失函数、端到端）
+mnist.py          IDX 数据加载（纯 urllib，不依赖 torchvision）
+requirements.txt  依赖声明
+BP手搓笔记.md      理论：公式推导、初始化数学、超参、失败诊断表
 ```
 
 被 `.gitignore` 排除（不进仓库）：`data/`（自动下载）、`runs/`（训练产物）、`.idea/`。

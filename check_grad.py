@@ -1,10 +1,6 @@
 from __future__ import annotations
 
-from hmac import compare_digest
-from string import digits
-
 import numpy as np
-from sklearn._loss import loss
 
 import nn
 from nn import Array
@@ -41,7 +37,7 @@ def abs_err(a: Array, b: Array) -> float:
     return float(np.max(np.abs(a - b)))
 
 def check_layer(layer: nn.Module, x: Array, seed: int = 0) -> list[tuple[str, float, float]]:
-    """[TODO] 对任意层（包括 Sequential）做完整梯度检查。
+    """对任意层（包括 Sequential）做完整梯度检查。
 
     返回 [(检查项名字, 相对误差, 绝对误差), ...]，检查项包括每个参数数组和输入 x。
 
@@ -102,7 +98,7 @@ def check_layer(layer: nn.Module, x: Array, seed: int = 0) -> list[tuple[str, fl
     results.append(compare_grad(f"input{tuple(x.shape)}",ana_x,num_x))
     return results
 
-def compare_grad(name:str, ana:Array, num:Array) -> list[tuple[str, float, float]]:
+def compare_grad(name:str, ana:Array, num:Array) -> tuple[str, float, float]:
     #计算解析梯度与数值梯度的相对误差与绝对误差
     ana = np.asarray(ana, dtype=np.float64)
     num = np.asarray(num, dtype=np.float64)
@@ -138,10 +134,10 @@ def check_model(model: nn.Sequential, x: Array, y: Array,
 
     #解析梯度
     logits = model.forward(x)
-    loss,digits = nn.softmax_cross_entropy(logits,y)
+    loss,dlogits = nn.softmax_cross_entropy(logits,y)
 
     model.zero_grad()
-    model.backward(digits)
+    model.backward(dlogits)
     ana = [g.copy() for g in model.grads()]
 
     #数值梯度

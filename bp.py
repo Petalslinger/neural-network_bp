@@ -14,7 +14,10 @@ try:
 except Exception:
     plt = None
 
-from PIL import Image, ImageDraw
+try:
+    from PIL import Image, ImageDraw
+except ImportError:
+    Image = ImageDraw = None
 
 import mnist
 import nn
@@ -146,6 +149,10 @@ def save_confusion(conf: Array, path: str) -> None:
 
 def save_misclassified(model: nn.Sequential, x: Array, y: Array, path: str,
                        n: int = 24, nrow: int = 6) -> None:
+    if Image is None:
+        print("  [skip] 未安装 Pillow（pip install Pillow），跳过错例图生成")
+        return
+
     pred = predict(model, x)
     wrong = np.flatnonzero(pred != y)[:n]
     if len(wrong) == 0:
